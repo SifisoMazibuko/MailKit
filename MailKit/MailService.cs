@@ -421,6 +421,38 @@ namespace MailKit {
 			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 		}
 
+		SecureSocketOptions GetSecureSocketOptions (Uri uri)
+		{
+			var protocol = uri.Scheme.ToLowerInvariant ();
+			var query = uri.ParsedQuery ();
+			string value;
+
+			// Note: early versions of MailKit used "pop3" and "pop3s"
+			if (protocol == "pop3s")
+				protocol = "pops";
+			else if (protocol == "pop3")
+				protocol = "pop";
+
+			if (protocol == Protocol + "s")
+				return SecureSocketOptions.SslOnConnect;
+
+			if (protocol != Protocol)
+				throw new ArgumentException ("Unknown URI scheme.", nameof (uri));
+
+			if (query.TryGetValue ("starttls", out value)) {
+				switch (value.ToLowerInvariant ()) {
+				default:
+					return SecureSocketOptions.StartTlsWhenAvailable;
+				case "always": case "true": case "yes":
+					return SecureSocketOptions.StartTls;
+				case "never": case "false": case "no":
+					return SecureSocketOptions.None;
+				}
+			}
+
+			return SecureSocketOptions.StartTlsWhenAvailable;
+		}
+
 		/// <summary>
 		/// Establish a connection to the specified mail server.
 		/// </summary>
@@ -464,36 +496,7 @@ namespace MailKit {
 			if (!uri.IsAbsoluteUri)
 				throw new ArgumentException ("The uri must be absolute.", nameof (uri));
 
-			var protocol = uri.Scheme.ToLowerInvariant ();
-			var query = uri.ParsedQuery ();
-			SecureSocketOptions options;
-			string value;
-
-			// Note: early versions of MailKit used "pop3" and "pop3s"
-			if (protocol == "pop3s")
-				protocol = "pops";
-			else if (protocol == "pop3")
-				protocol = "pop";
-
-			if (protocol == Protocol + "s") {
-				options = SecureSocketOptions.SslOnConnect;
-			} else if (protocol != Protocol) {
-				throw new ArgumentException ("Unknown URI scheme.", nameof (uri));
-			} else if (query.TryGetValue ("starttls", out value)) {
-				switch (value.ToLowerInvariant ()) {
-				default:
-					options = SecureSocketOptions.StartTlsWhenAvailable;
-					break;
-				case "always": case "true": case "yes":
-					options = SecureSocketOptions.StartTls;
-					break;
-				case "never": case "false": case "no":
-					options = SecureSocketOptions.None;
-					break;
-				}
-			} else {
-				options = SecureSocketOptions.StartTlsWhenAvailable;
-			}
+			var options = GetSecureSocketOptions (uri);
 
 			Connect (uri.Host, uri.Port < 0 ? 0 : uri.Port, options, cancellationToken);
 		}
@@ -539,11 +542,9 @@ namespace MailKit {
 			if (!uri.IsAbsoluteUri)
 				throw new ArgumentException ("The uri must be absolute.", nameof (uri));
 
-			return Task.Factory.StartNew (() => {
-				lock (SyncRoot) {
-					Connect (uri, cancellationToken);
-				}
-			}, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+			var options = GetSecureSocketOptions (uri);
+
+			return ConnectAsync (uri.Host, uri.Port < 0 ? 0 : uri.Port, options, cancellationToken);
 		}
 
 		/// <summary>

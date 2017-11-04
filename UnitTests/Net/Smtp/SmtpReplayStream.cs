@@ -27,6 +27,8 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using NUnit.Framework;
@@ -129,6 +131,11 @@ namespace UnitTests.Net.Smtp {
 			return nread;
 		}
 
+		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			return Task.FromResult (Read (buffer, offset, count));
+		}
+
 		Stream GetResourceStream (string name)
 		{
 			return GetType ().Assembly.GetManifestResourceStream ("UnitTests.Net.Smtp.Resources." + name);
@@ -159,9 +166,21 @@ namespace UnitTests.Net.Smtp {
 			}
 		}
 
+		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+		{
+			Write (buffer, offset, count);
+			return Task.FromResult (true);
+		}
+
 		public override void Flush ()
 		{
 			CheckDisposed ();
+		}
+
+		public override Task FlushAsync (CancellationToken cancellationToken)
+		{
+			CheckDisposed ();
+			return Task.FromResult (true);
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)

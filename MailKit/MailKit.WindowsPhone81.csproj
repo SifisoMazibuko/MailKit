@@ -139,6 +139,7 @@
     <Compile Include="Net\Pop3\Pop3Language.cs" />
     <Compile Include="Net\Pop3\Pop3ProtocolException.cs" />
     <Compile Include="Net\Pop3\Pop3Stream.cs" />
+    <Compile Include="Net\Smtp\AsyncSmtpClient.cs" />
     <Compile Include="Net\Smtp\SmtpCapabilities.cs" />
     <Compile Include="Net\Smtp\SmtpClient.cs" />
     <Compile Include="Net\Smtp\SmtpCommandException.cs" />
