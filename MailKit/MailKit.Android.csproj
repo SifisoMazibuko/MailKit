@@ -79,6 +79,7 @@
     <Compile Include="Net\Imap\ImapStream.cs" />
     <Compile Include="Net\Imap\ImapToken.cs" />
     <Compile Include="Net\Imap\ImapUtils.cs" />
+    <Compile Include="Net\Pop3\AsyncPop3Client.cs" />
     <Compile Include="Net\Pop3\Pop3Capabilities.cs" />
     <Compile Include="Net\Pop3\Pop3Client.cs" />
     <Compile Include="Net\Pop3\Pop3Command.cs" />
