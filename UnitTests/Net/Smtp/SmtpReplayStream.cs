@@ -60,13 +60,16 @@ namespace UnitTests.Net.Smtp {
 		SmtpReplayState state;
 		Stream stream;
 		bool disposed;
+		bool asyncIO;
+		bool isAsync;
 		int index;
 
-		public SmtpReplayStream (IList<SmtpReplayCommand> commands)
+		public SmtpReplayStream (IList<SmtpReplayCommand> commands, bool asyncIO)
 		{
 			stream = GetResourceStream (commands[0].Resource);
 			state = SmtpReplayState.SendResponse;
 			this.commands = commands;
+			this.asyncIO = asyncIO;
 		}
 
 		void CheckDisposed ()
@@ -116,6 +119,12 @@ namespace UnitTests.Net.Smtp {
 		{
 			CheckDisposed ();
 
+			if (asyncIO) {
+				Assert.IsTrue (isAsync, "Trying to Read in an async unit test.");
+			} else {
+				Assert.IsFalse (isAsync, "Trying to ReadAsync in a non-async unit test.");
+			}
+
 			Assert.AreEqual (SmtpReplayState.SendResponse, state, "Trying to read when no command given.");
 			Assert.IsNotNull (stream, "Trying to read when no data available.");
 
@@ -133,7 +142,13 @@ namespace UnitTests.Net.Smtp {
 
 		public override Task<int> ReadAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			return Task.FromResult (Read (buffer, offset, count));
+			isAsync = true;
+
+			try {
+				return Task.FromResult (Read (buffer, offset, count));
+			} finally {
+				isAsync = false;
+			}
 		}
 
 		Stream GetResourceStream (string name)
@@ -144,6 +159,12 @@ namespace UnitTests.Net.Smtp {
 		public override void Write (byte[] buffer, int offset, int count)
 		{
 			CheckDisposed ();
+
+			if (asyncIO) {
+				Assert.IsTrue (isAsync, "Trying to Write in an async unit test.");
+			} else {
+				Assert.IsFalse (isAsync, "Trying to WriteAsync in a non-async unit test.");
+			}
 
 			Assert.AreNotEqual (SmtpReplayState.SendResponse, state, "Trying to write when a command has already been given.");
 
@@ -168,18 +189,29 @@ namespace UnitTests.Net.Smtp {
 
 		public override Task WriteAsync (byte[] buffer, int offset, int count, CancellationToken cancellationToken)
 		{
-			Write (buffer, offset, count);
-			return Task.FromResult (true);
+			isAsync = true;
+
+			try {
+				Write (buffer, offset, count);
+				return Task.FromResult (true);
+			} finally {
+				isAsync = false;
+			}
 		}
 
 		public override void Flush ()
 		{
 			CheckDisposed ();
+
+			Assert.IsFalse (asyncIO, "Trying to Flush in an async unit test.");
 		}
 
 		public override Task FlushAsync (CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
+
+			Assert.IsTrue (asyncIO, "Trying to FlushAsync in a non-async unit test.");
+
 			return Task.FromResult (true);
 		}
 

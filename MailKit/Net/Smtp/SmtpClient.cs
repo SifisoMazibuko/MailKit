@@ -734,6 +734,43 @@ namespace MailKit.Net.Smtp {
 			OnConnected ();
 		}
 
+		internal async Task ReplayConnectAsync (string hostName, Stream replayStream, CancellationToken cancellationToken = default (CancellationToken))
+		{
+			CheckDisposed ();
+
+			if (hostName == null)
+				throw new ArgumentNullException (nameof (hostName));
+
+			if (replayStream == null)
+				throw new ArgumentNullException (nameof (replayStream));
+
+			Stream = new SmtpStream (replayStream, null, ProtocolLogger);
+			capabilities = SmtpCapabilities.None;
+			AuthenticationMechanisms.Clear ();
+			host = hostName;
+			secure = false;
+			MaxSize = 0;
+
+			try {
+				// read the greeting
+				var response = await Stream.ReadResponseAsync (cancellationToken).ConfigureAwait (false);
+
+				if (response.StatusCode != SmtpStatusCode.ServiceReady)
+					throw new SmtpCommandException (SmtpErrorCode.UnexpectedStatusCode, response.StatusCode, response.Response);
+
+				// Send EHLO and get a list of supported extensions
+				await EhloAsync (true, cancellationToken).ConfigureAwait (false);
+
+				connected = true;
+			} catch {
+				Stream.Dispose ();
+				Stream = null;
+				throw;
+			}
+
+			OnConnected ();
+		}
+
 		static void ComputeDefaultValues (string host, ref int port, ref SecureSocketOptions options, out Uri uri, out bool starttls)
 		{
 			switch (options) {

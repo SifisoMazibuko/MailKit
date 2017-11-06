@@ -220,7 +220,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ServiceNotConnectedException> (() => client.Send (message));
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -280,7 +280,7 @@ namespace UnitTests.Net.Smtp {
 				Assert.Throws<ServiceNotConnectedException> (async () => await client.SendAsync (message));
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -338,7 +338,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -457,7 +457,7 @@ namespace UnitTests.Net.Smtp {
 				client.LocalDomain = "unit-tests.mimekit.org";
 
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -559,7 +559,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -613,7 +613,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -689,7 +689,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -770,7 +770,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -828,7 +828,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -884,7 +884,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -939,7 +939,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -999,7 +999,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1060,7 +1060,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1121,7 +1121,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1179,7 +1179,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					client.ReplayConnect ("localhost", new SmtpReplayStream (commands, false));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
@@ -1231,7 +1231,7 @@ namespace UnitTests.Net.Smtp {
 
 			using (var client = new SmtpClient ()) {
 				try {
-					client.ReplayConnect ("localhost", new SmtpReplayStream (commands));
+					await client.ReplayConnectAsync ("localhost", new SmtpReplayStream (commands, true));
 				} catch (Exception ex) {
 					Assert.Fail ("Did not expect an exception in Connect: {0}", ex);
 				}
