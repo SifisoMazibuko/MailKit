@@ -584,7 +584,7 @@ namespace MailKit.Net.Pop3 {
 			return ReadAsync (buffer, offset, count, true, cancellationToken);
 		}
 
-		async Task<bool> ReadLineAsync (Stream output, bool doAsync, CancellationToken cancellationToken)
+		async Task<bool> ReadLineAsync (Stream ostream, bool doAsync, CancellationToken cancellationToken)
 		{
 			CheckDisposed ();
 
@@ -610,7 +610,7 @@ namespace MailKit.Net.Pop3 {
 					count = (int) (inptr - start);
 
 					if (inptr == inend) {
-						output.Write (input, offset, count);
+						ostream.Write (input, offset, count);
 						midline = true;
 						return false;
 					}
@@ -620,7 +620,7 @@ namespace MailKit.Net.Pop3 {
 					inputIndex++;
 					count++;
 
-					output.Write (input, offset, count);
+					ostream.Write (input, offset, count);
 
 					return true;
 				}
@@ -634,7 +634,7 @@ namespace MailKit.Net.Pop3 {
 		/// This method should be called in a loop until it returns <c>true</c>.
 		/// </remarks>
 		/// <returns><c>true</c>, if reading the line is complete, <c>false</c> otherwise.</returns>
-		/// <param name="output">The output stream to write the line data into.</param>
+		/// <param name="ostream">The output stream to write the line data into.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
@@ -645,9 +645,9 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		internal bool ReadLine (Stream output, CancellationToken cancellationToken)
+		internal bool ReadLine (Stream ostream, CancellationToken cancellationToken)
 		{
-			return ReadLineAsync (output, false, cancellationToken).GetAwaiter ().GetResult ();
+			return ReadLineAsync (ostream, false, cancellationToken).GetAwaiter ().GetResult ();
 		}
 
 		/// <summary>
@@ -657,7 +657,7 @@ namespace MailKit.Net.Pop3 {
 		/// This method should be called in a loop until it returns <c>true</c>.
 		/// </remarks>
 		/// <returns><c>true</c>, if reading the line is complete, <c>false</c> otherwise.</returns>
-		/// <param name="output">The output stream to write the line data into.</param>
+		/// <param name="ostream">The output stream to write the line data into.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="System.ObjectDisposedException">
 		/// The stream has been disposed.
@@ -668,9 +668,9 @@ namespace MailKit.Net.Pop3 {
 		/// <exception cref="System.IO.IOException">
 		/// An I/O error occurred.
 		/// </exception>
-		internal Task<bool> ReadLineAsync (Stream output, CancellationToken cancellationToken)
+		internal Task<bool> ReadLineAsync (Stream ostream, CancellationToken cancellationToken)
 		{
-			return ReadLineAsync (output, true, cancellationToken);
+			return ReadLineAsync (ostream, true, cancellationToken);
 		}
 
 		async Task WriteAsync (byte[] buffer, int offset, int count, bool doAsync, CancellationToken cancellationToken)
