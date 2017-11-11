@@ -662,13 +662,13 @@ namespace MailKit.Net.Imap {
 				throw new InvalidOperationException ();
 
 			using (var memory = new MemoryStream ()) {
-				int offset, count;
+				bool complete;
 				byte[] buf;
+				int count;
 
-				while (!Stream.ReadLine (out buf, out offset, out count, cancellationToken))
-					memory.Write (buf, offset, count);
-
-				memory.Write (buf, offset, count);
+				do {
+					complete = Stream.ReadLine (memory, cancellationToken);
+				} while (!complete);
 
 				count = (int) memory.Length;
 #if !NETFX_CORE && !NETSTANDARD
